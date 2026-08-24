@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ireland: Culture &amp; Funny Facts</title>
+    <link rel="icon" type="image/png" href="img/flag.png">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { height: 100%; }
+        body {
+            font-family: Georgia, 'Times New Roman', serif;
+            background: #ff883e; /* orange fallback */
+        }
+
+        /* ---- Flag background: green band | white content | orange band ---- */
+        .flag-layout {
+            display: grid;
+            grid-template-columns: 1fr minmax(320px, 780px) 1fr;
+            min-height: 100vh;
+            background: #ffffff;
+        }
+        .band-green {
+            background:
+                radial-gradient(circle at 50% 20%, rgba(255,255,255,.12) 0 0, transparent 15%),
+                #169b62;
+        }
+        .band-orange {
+            background:
+                radial-gradient(circle at 50% 70%, rgba(0,0,0,.12) 0 0, transparent 18%),
+                #ff883e;
+        }
+        .band-green, .band-orange {
+            background-clip: padding-box;
+            box-shadow: inset 0 0 90px rgba(0,0,0,.18);
+        }
+
+        .content {
+            background: #ffffff;
+            padding: 30px 40px 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        /* decorative shamrock watermark on the white band */
+        .content::before {
+            content: "";
+            position: absolute;
+            top: 0; right: 0; bottom: 0;
+            width: 100%;
+            background-image:
+                radial-gradient(rgba(22,155,98,.05) 1.2px, transparent 1.2px);
+            background-size: 22px 22px;
+            pointer-events: none;
+        }
+
+        /* ---- Header ---- */
+        .hero {
+            position: relative;
+            overflow: hidden;
+            border-radius: 18px 18px 0 0;
+            border: 1px solid #e6f2ea;
+            box-shadow: 0 10px 24px rgba(0,60,30,.15);
+        }
+        .hero img { display: block; width: 100%; height: 300px; object-fit: cover; }
+        .hero-title {
+            position: absolute;
+            left: 0; right: 0; bottom: 0;
+            padding: 24px 20px;
+            background: linear-gradient(to top, rgba(0,40,20,.85), transparent);
+            color: #fff;
+            text-align: center;
+        }
+        .hero-title h1 {
+            font-size: 2.2rem;
+            letter-spacing: .6px;
+            text-shadow: 0 2px 8px rgba(0,0,0,.5);
+        }
+        .hero-title p {
+            font-style: italic;
+            font-size: .95rem;
+            color: #eafff4;
+            margin-top: 6px;
+        }
+
+        /* ---- Section titles ---- */
+        .section-head {
+            margin: 34px 0 6px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section-head .num {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #fff;
+            background: #169b62;
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+        .section-head h2 { font-size: 1.5rem; color: #0a3d24; }
+        .rule-row { height: 4px; margin: 8px 0 20px; border-radius: 2px; background: linear-gradient(to right, #169b62 33%, #fff 33%, #fff 66%, #ff883e 66%); }
+
+        /* ---- Topic cards ---- */
+        .card {
+            display: flex;
+            gap: 18px;
+            align-items: flex-start;
+            background: #fbfdfc;
+            border: 1px solid #e3eee8;
+            border-radius: 14px;
+            padding: 16px;
+            margin: 14px 0;
+            box-shadow: 0 2px 8px rgba(0,60,30,.08);
+            transition: transform .15s ease, box-shadow .15s ease;
+        }
+        .card:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,60,30,.14); }
+        .card img {
+            width: 120px;
+            height: 90px;
+            object-fit: cover;
+            border-radius: 10px;
+            flex-shrink: 0;
+            border: 2px solid #169500;
+        }
+        .card-body h3 { font-size: 1.08rem; color: #0a3d24; margin-bottom: 4px; }
+        .card-body p { font-size: .92rem; color: #28402f; line-height: 1.5; }
+        .card-body .tag {
+            display: inline-block;
+            font-size: .68rem;
+            font-weight: bold;
+            letter-spacing: .5px;
+            text-transform: uppercase;
+            color: #fff;
+            background: #ff883e;
+            padding: 2px 8px;
+            border-radius: 12px;
+            margin-bottom: 5px;
+        }
+        .card.body-culture .tag { background: #169b62; }
+
+        /* ---- Clickable cards ---- */
+        .card { cursor: pointer; flex-wrap: wrap; }
+        .card::after {
+            content: "Click for the full image and more";
+            width: 100%;
+            margin-top: 10px;
+            text-align: right;
+            font-size: .7rem;
+            font-style: italic;
+            letter-spacing: .3px;
+            color: #169b62;
+            opacity: .8;
+        }
+        .card.body-culture::after { color: #ff883e; }
+
+        /* ---- Modal ---- */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            background: rgba(5, 30, 18, .88);
+            padding: 25px;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal.open { display: flex; }
+        .modal-box {
+            position: relative;
+            background: #ffffff;
+            border-radius: 18px;
+            width: 100%;
+            max-width: 780px;
+            max-height: 92vh;
+            overflow: hidden;
+            box-shadow: 0 25px 60px rgba(0,0,0,.45);
+            animation: modalUp .25s ease;
+        }
+        @keyframes modalUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to   { transform: translateY(0);    opacity: 1; }
+        }
+        .modal-box img {
+            display: block;
+            width: 100%;
+            max-height: 58vh;
+            object-fit: contain;
+            background: #0a3d24;
+        }
+        .modal-body { padding: 20px 26px 26px; overflow-y: auto; max-height: 34vh; }
+        .modal-body .tag {
+            display: inline-block;
+            font-size: .78rem;
+            font-weight: bold;
+            letter-spacing: .5px;
+            text-transform: uppercase;
+            color: #fff;
+            background: #ff883e;
+            padding: 3px 10px;
+            border-radius: 14px;
+            margin-bottom: 8px;
+        }
+        .modal-body.tag-culture .tag { background: #169b62; }
+        .modal-body h3 { font-size: 1.5rem; color: #0a3d24; margin-bottom: 10px; }
+        .modal-body p { font-size: 1rem; color: #28402f; line-height: 1.6; }
+        .modal-close {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 38px;
+            height: 38px;
+            border: none;
+            border-radius: 50%;
+            background: rgba(255,255,255,.92);
+            color: #0a3d24;
+            font-size: 1.4rem;
+            font-weight: bold;
+            line-height: 1;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,.3);
+            z-index: 2;
+        }
+        .modal-close:hover { background: #ff883e; color: #fff; }
+
+        /* ---- Pronounce button ---- */
+        .pronounce-btn {
+            margin-top: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: 2px solid #169b62;
+            background: #169b62;
+            color: #fff;
+            font-family: inherit;
+            font-size: .95rem;
+            font-weight: bold;
+            padding: 9px 16px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: background .15s ease, transform .15s ease;
+        }
+        .pronounce-btn:hover { background: #0e7a4c; transform: translateY(-1px); }
+        .pronounce-icon {
+            display: inline-block;
+            font-size: .8rem;
+            width: 22px;
+            height: 22px;
+            line-height: 20px;
+            text-align: center;
+            background: #fff;
+            color: #169b62;
+            border-radius: 50%;
+        }
+
+        /* ---- Footer ---- */
+        footer { margin-top: 34px; text-align: center; }
+        footer .flag {
+            height: 8px;
+            border-radius: 4px;
+            background: linear-gradient(to right, #169b62 33%, #ffffff 33%, #ffffff 66%, #ff883e 66%);
+            border: 1px solid #dfe9e3;
+        }
+
+        /* ---- Responsive ---- */
+        @media (max-width: 860px) {
+            .flag-layout { grid-template-columns: 1fr; }
+            .band-green, .band-orange { display: none; }
+            .content { padding: 24px 18px; }
+        }
+        @media (max-width: 520px) {
+            .card { flex-direction: column; align-items: stretch; }
+            .card img { width: 100%; height: 160px; }
+        }
+    </style>
+</head>
+<body>
+<div class="flag-layout">
+
+    <!-- Green band -->
+    <aside class="band-green"></aside>
+
+    <!-- White center: all content -->
+    <main class="content">
+
+        <header class="hero">
+            <img src="img/landscape.jpg" alt="The Cliffs of Moher, Ireland">
+            <div class="hero-title">
+                <h1>Ireland: Culture &amp; Funny Facts</h1>
+                <p>Two sides of the Emerald Isle &mdash; its traditions and the quirks that make it unforgettable.</p>
+            </div>
+        </header>
+
+        <!-- ===== CULTURE ===== -->
+        <div class="section-head">
+            <span class="num">01</span>
+            <h2>Culture</h2>
+        </div>
+        <div class="rule-row"></div>
+
+        <article class="card body-culture" id="cardLanguages">
+            <img src="img/language.jpg" alt="Bilingual Irish and English road sign">
+            <div class="card-body">
+                <span class="tag">Culture</span>
+                <h3>Languages</h3>
+                <p>Irish (Gaeilge) is the traditional language, but English is what most people speak daily. Signs across the island show both, and you&rsquo;ll spot Irish words everywhere.</p>
+            </div>
+        </article>
+
+        <article class="card body-culture" id="cardMusic">
+            <img src="img/music.jpg" alt="Traditional uilleann pipes">
+            <div class="card-body">
+                <span class="tag">Culture</span>
+                <h3>Music &amp; Dance</h3>
+                <p>From the fiddle to the uilleann pipes, traditional music lives in pub sessions, while fast-paced ceili dance keeps the beat of a deep Irish identity.</p>
+            </div>
+        </article>
+
+        <article class="card body-culture" id="cardPatrick">
+            <img src="img/stpatrick.jpg" alt="St. Patrick's Day parade in Dublin">
+            <div class="card-body">
+                <span class="tag">Culture</span>
+                <h3>St. Patrick's Day</h3>
+                <p>On 17 March, Ireland honours its patron saint. What began as a quiet religious holiday is now a worldwide celebration, with Dublin hosting some of the biggest parades.</p>
+            </div>
+        </article>
+
+        <article class="card body-culture" id="cardFolklore">
+            <img src="img/folklore.jpg" alt="A four-leaf clover, Ireland's lucky charm">
+            <div class="card-body">
+                <span class="tag">Culture</span>
+                <h3>Folklore</h3>
+                <p>The leprechaun, the pot of gold and the lucky four-leaf clover run deep in Irish stories. Mischievous fairies and hidden spirits shape a belief in good fortune.</p>
+            </div>
+        </article>
+
+        <!-- ===== FUN FACTS ===== -->
+        <div class="section-head">
+            <span class="num">02</span>
+            <h2>Fun Facts</h2>
+        </div>
+        <div class="rule-row"></div>
+
+        <article class="card" id="cardGrand">
+            <img src="img/grand.jpg" alt="A traditional Irish pub">
+            <div class="card-body">
+                <span class="tag">Fun Fact</span>
+                <h3>The &ldquo;It&rsquo;s Grand&rdquo; Attitude</h3>
+                <p>Ask an Irish person how they are and they&rsquo;ll answer &ldquo;grand&rdquo; &mdash; which can mean &ldquo;perfectly fine&rdquo; or &ldquo;everything is falling apart, but we&rsquo;ll carry on.&rdquo; Same word, endless meaning.</p>
+            </div>
+        </article>
+
+        <article class="card" id="cardLongest">
+            <img src="img/longest.jpg" alt="Muckanaghederdauhaulia, a very long place name">
+            <div class="card-body">
+                <span class="tag">Fun Fact</span>
+                <h3>The Longest Place Name</h3>
+                <p>One village claims one of the longest place names in the world &mdash; so long it barely fits on a road sign. It translates to something about a red lake on a marshy glen. Of course.</p>
+            </div>
+        </article>
+
+        <article class="card" id="cardRiver">
+            <img src="img/greenriver.jpg" alt="Chicago river dyed green">
+            <div class="card-body">
+                <span class="tag">Fun Fact</span>
+                <h3>They Paint a River Green</h3>
+                <p>Every St. Patrick's Day, Chicago literally dyes its river green with a harmless vegetable-based powder. A modern tradition &mdash; with a very Irish vibe.</p>
+            </div>
+        </article>
+
+        <article class="card" id="cardPotato">
+            <img src="img/potato.jpg" alt="A basket of potatoes">
+            <div class="card-body">
+                <span class="tag">Fun Fact</span>
+                <h3>Potato Love and Myth</h3>
+                <p>Yes, the Irish love their potato &mdash; and it&rsquo;s a proud part of their story. But they eat far more than spuds. The stereotype is friendly, and also a little exaggerated.</p>
+            </div>
+        </article>
+
+        <article class="card" id="cardLeprechaun">
+            <img src="img/leprechaun.jpg" alt="Illustration of a leprechaun">
+            <div class="card-body">
+                <span class="tag">Fun Fact</span>
+                <h3>Leprechaun Superstitions</h3>
+                <p>A leprechaun hides his gold at the end of a rainbow, and if you catch him he must grant wishes to be freed. Catching one... now there&rsquo;s the real trick.</p>
+            </div>
+        </article>
+
+        <footer>
+            <div class="flag"></div>
+        </footer>
+
+    </main>
+
+    <!-- Orange band -->
+    <aside class="band-orange"></aside>
+
+</div>
+
+    <!-- ===== MODAL ===== -->
+    <div class="modal" id="modal">
+        <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+            <button class="modal-close" id="modalClose" title="Close">&times;</button>
+            <img id="modalImg" src="" alt="">
+            <div class="modal-body" id="modalBody">
+                <span class="tag" id="modalTag"></span>
+                <h3 id="modalTitle"></h3>
+                <p id="modalText"></p>
+                <button class="pronounce-btn" id="pronounceBtn" title="Hear it pronounced">
+                    <span class="pronounce-icon">&#9654;</span> Hear how it&rsquo;s pronounced
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <audio id="pipeAudio" src="img/pipe_clip.mp3" preload="auto"></audio>
+    <audio id="pronounceAudio" src="img/pronounce.mp3" preload="auto"></audio>
+
+    <script>
+        var topics = {
+            cardLanguages: {
+                tag: "Culture",
+                title: "Languages",
+                text: "Gaeilge, the Irish language, is one of the oldest written languages in Europe and it is still very much alive. Around 1.7 million people on the island say they have some ability in it, and in the Gaeltacht coastal regions it is the everyday language of home, work and school. It appears on road signs and is broadcast on dedicated Irish radio and television stations. English carries most daily conversation, but a few words of Gaeilge open the door to a completely different way of being Irish."
+            },
+            cardMusic: {
+                tag: "Culture",
+                img: "img/music-modal.jpg",
+                text: "Traditional Irish music has been passed from ear to ear for centuries, moving from the kitchen to the pub corner and finally to world stages. The fiddle, the tin whistle, the accordion, the bodhr\u00e1n drum and the soft, wavering sound of the uilleann pipes give it an unmistakable voice. A session is wonderfully informal: musicians sit together, and when a tune begins anyone who plays is welcome to join without a word. Step and c\u00e9il\u00ed dancing carry the same deep rhythm, and shows such as Riverdance brought that joy to audiences on every continent."
+            },
+            cardPatrick: {
+                tag: "Culture",
+                text: "Saint Patrick, the fifth-century missionary said to have brought Christianity to Ireland and to have banished the snakes, is the island's patron saint. Every 17 March his feast day makes the world go green. In Ireland every town holds a parade, and Dublin hosts the biggest of them all, drawing hundreds of thousands of people into the streets. Around the globe, landmarks are lit emerald, rivers are dyed green and the Irish diaspora toasts to home. It began as a quiet, religious day: today it is one of the friendliest parties on the calendar."
+            },
+            cardFolklore: {
+                tag: "Culture",
+                text: "The \u201cGood People\u201d of Irish folklore are the fairies and hidden spirits that generations of islanders took seriously. The leprechaun, small and sly, is said to guard a pot of gold at the end of the rainbow. The banshee warns of death with a mournful, unearthly cry. And the four-leaf clover, rarer than the three-leaf shamrock, is still prized as a charm against bad luck. In the countryside, fairy forts and lone hawthorn trees were treated with caution so the invisible ones would not be annoyed. Hundreds of those stories, charms and small daily habits still colour the Irish imagination."
+            },
+            cardGrand: {
+                tag: "Fun Fact",
+                text: "\u201cGrand\u201d may be the most Irish word in the English language. Ask someone in Ireland \u201chow are you?\u201d and the answer is usually \u201cgrand\u201d: it can mean \u201cperfectly fine\u201d or \u201cthe car won't start, I'm soaked through and everything is going wrong, but I'm coping.\u201d It is the country's gentle way of not complaining, not making problems yours, and keeping every conversation warm. No drama, no fuss. Whether it is true or not, the answer is always \u201cgrand\u201d."
+            },
+            cardLongest: {
+                tag: "Fun Fact",
+                text: "Somewhere in the wild heart of Connemara there is a townland with one of the longest single-word place names on Earth: Muckanaghederdauhaulia. In Irish it reads Muiceanach idir Dh\u00e1 Sh\u00e1ile, which means \u201cthe piggery between two saltwaters\u201d. The sign is so long that it barely fits on a map or a roadpost, and visitors queue to photograph it every year. It is a perfect little Irish joke: even geography deserves to smile."
+            },
+            cardRiver: {
+                tag: "Fun Fact",
+                text: "Every St. Patrick's Day weekend, the city of Chicago dyes its own river bright green in front of waiting crowds. The vegetable-based powder is poured into the water and the Chicago River turns vivid emerald within a couple of minutes, watched by thousands from the bridges and the banks. The recipe has been kept quiet for a long time and it is considered harmless to the river. The custom was invented in America, but the colour leaves no doubt about whose celebration it honours."
+            },
+            cardPotato: {
+                tag: "Fun Fact",
+                text: "Potatoes arrived from the Americas in the 16th century and quietly changed the whole of Ireland. The affordable, filling food let the population grow, until the crop failed in the 1840s and the Great Famine changed the island forever: about a million people were lost to hunger, and a million more left their homes. That memory is still deeply present. Today Ireland eats far more than potatoes \u2014 fresh seafood, thick stews, sour soda bread and mountains of butter \u2014 but the humble potato remains the unchallenged king of the Irish plate."
+            },
+            cardLeprechaun: {
+                tag: "Fun Fact",
+                text: "The leprechaun is the most famous of Ireland's \u201cGood People\u201d: a small, greedy cobbler who mends shoes by day and hides his crock of gold by night. Legend says the gold lies at the end of a rainbow and that whoever catches the leprechaun must be granted his wishes. But a leprechaun never stays in the same spot twice, and the instant you look away, he vanishes \u2014 with his treasure. Catch one if you can, keep your eyes on him and the rainbow, and you might just believe in magic a little longer."
+            }
+        };
+
+        var modal = document.getElementById('modal');
+        var modalImg = document.getElementById('modalImg');
+        var modalTag = document.getElementById('modalTag');
+        var modalBody = document.getElementById('modalBody');
+        var modalTitle = document.getElementById('modalTitle');
+        var modalText = document.getElementById('modalText');
+        var pipeAudio = document.getElementById('pipeAudio');
+        var pronounceAudio = document.getElementById('pronounceAudio');
+        var pronounceBtn = document.getElementById('pronounceBtn');
+
+        function openModal(card) {
+            var topic = topics[card.id];
+            if (!topic) return;
+            var img = card.querySelector('img');
+            modalImg.src = topic.img || img.src;
+            modalImg.alt = topic.img ? topic.title + ' image' : img.alt;
+            modalTag.textContent = topic.tag;
+            modalTitle.textContent = card.querySelector('h3').textContent;
+            modalText.textContent = topic.text;
+            modalBody.className = 'modal-body ' + (topic.tag === 'Culture' ? 'tag-culture' : '');
+            pronounceBtn.style.display = (card.id === 'cardLongest') ? 'inline-flex' : 'none';
+            if (!pronounceAudio.paused) { pronounceAudio.pause(); pronounceAudio.currentTime = 0; }
+            modal.classList.add('open');
+            document.body.style.overflow = 'hidden';
+            if (card.id === 'cardMusic') {
+                pipeAudio.currentTime = 0;
+                pipeAudio.play().catch(function () {});
+            }
+        }
+
+        function closeModal() {
+            modal.classList.remove('open');
+            document.body.style.overflow = '';
+
+            if (!pronounceAudio.paused) {
+                pronounceAudio.pause();
+                pronounceAudio.currentTime = 0;
+            }
+            if (!pipeAudio.paused) {
+                pipeAudio.pause();
+                pipeAudio.currentTime = 0;
+            }
+        }
+
+        pronounceBtn.addEventListener('click', function () {
+            if (!pipeAudio.paused) { pipeAudio.pause(); pipeAudio.currentTime = 0; }
+            pronounceAudio.currentTime = 0;
+            pronounceAudio.play().catch(function () {});
+        });
+
+        document.querySelectorAll('.card').forEach(function (card) {
+            card.addEventListener('click', function () { openModal(card); });
+        });
+
+        document.getElementById('modalClose').addEventListener('click', closeModal);
+        modal.addEventListener('click', function (e) {
+            if (e.target === modal) closeModal();
+        });
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') closeModal();
+        });
+    </script>
+</body>
+</html>
